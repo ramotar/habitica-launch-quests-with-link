@@ -1,6 +1,5 @@
 function doGet(e) {
-  const response = api_getAuthenticatedUserProfile("stats,flags.cronCount");
-  user = JSON.parse(response).data;
+  user = api_getUser();
 
   var allQuests = user.items.quests;
   var userName = user.auth.local.username;
@@ -47,18 +46,6 @@ function doGet(e) {
     }
     return content;
   }
-}
-
-
-// Get user info
-function api_getAuthenticatedUserProfile(userFields) {
-  const params = {
-    "method": "get",
-    "headers": HEADERS,
-    "muteHttpExceptions": true,
-  }
-  var url = "https://habitica.com/api/v3/user";
-  return UrlFetchApp.fetch(url, params);
 }
 
 
