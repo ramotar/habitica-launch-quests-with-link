@@ -2,6 +2,25 @@
 // - Ideally prefix functions that access the API with "api_" to quickly see which ones
 //   access the API and to be able to budget your 30 requests per minute limit well
 
+/**
+ * doGet(event)
+ *
+ * Function to handle GET requests to the Web App.
+ * Serves the interface to the script user.
+ */
+function doGet(event) {
+  let webAppURL = ScriptApp.getService().getUrl();
+  setWebAppURL(webAppURL);
+
+  let template = HtmlService.createTemplateFromFile('template/doGet');
+  template.installTime = getInstallTime();
+
+  let output = template.evaluate();
+  output.setTitle(getScriptName());
+
+  return output;
+}
+
 function processWebhookInstant(type, data) {
   // [Authors] This function gets called immediately,
   //   whenever a webhook of your script is activated.

@@ -1,23 +1,4 @@
 /**
- * doGet(event)
- *
- * Function to handle GET requests to the Web App.
- * Serves the interface to the script user.
- */
-function doGet(event) {
-  let webAppURL = ScriptApp.getService().getUrl();
-  setWebAppURL(webAppURL);
-
-  let template = HtmlService.createTemplateFromFile('template/doGet');
-  template.installTime = getInstallTime();
-
-  let output = template.evaluate();
-  output.setTitle(getScriptName());
-
-  return output;
-}
-
-/**
  * doPost(event)
  *
  * Function to handle POST requests to the Web App.
