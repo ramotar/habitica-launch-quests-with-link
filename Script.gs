@@ -1,19 +1,3 @@
-// [Users] Required script data to fill in
-const USER_ID = "b477462a-5bb5-4040-9505-f0b049b4f0bb";
-const API_TOKEN = "924f2e17-708a-46da-9255-8f063b459c1f"; // Do not share this with anyone
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbysrsCmjLxUVwrnOGZ2dq2WfThishPJX5C01FCIU1zKnuXoqJX4SYhj8P55yulYIOuv/exec"; //Do not share this URL. Save and re-deploy after pasting and share the NEW URL generated.
-const WEB_APP_URL_2 = "https://script.google.com/macros/s/AKfycbzH-t_1yPL-1ddKDKvAsCyeC_WgQd9nPjBk17jBhxACCTGZMIgGocNadWbQ7osTcizZ/exec"
-
-// [Users] Do not edit code below this line
-
-const AUTHOR_ID = "7d2dce0e-4197-407b-b40f-8b5530774486";
-const SCRIPT_NAME = "Launch Quests With Link V3";
-const HEADERS = {
-  "x-client": AUTHOR_ID + "-" + SCRIPT_NAME,
-  "x-api-user": USER_ID,
-  "x-api-key": API_TOKEN,
-}
-
 function doGet(e) {
   const response = api_getAuthenticatedUserProfile("stats,flags.cronCount");
   user = JSON.parse(response).data;
@@ -35,7 +19,7 @@ function doGet(e) {
       urlList = urlList + scrollCode + " : " + Object.values(ownedScrolls)[count] + " owned" + '\n\n';
       count++;
     }
-    var menu = userName.toString() + "'s quest inventory and codes:" + urlList + "\n\n\nQuest line code reference: 'atom' is Attack of the Mundane, 'moon' is Lunar Battle, and 'moonstone' is Recidvate.\n\n\nINSTRUCTIONS: Copy-paste the url below into browser address bar, followed by the quest code above, then hit ‘enter’.\n\nIMPORTANT NOTE: The links will only work when there is ONE and ONLY ONE Google account signed in to the browser.\nRather than logging out of your Google accounts, it's easier to just open an unused browser, or an incognito (Chrome),\nprivate (Firefox), or inPrivate (Internet Explorer) window, log in to one Google account, and paste the link there.\n\nLink:\n" + WEB_APP_URL + "?questId=";
+    var menu = userName.toString() + "'s quest inventory and codes:" + urlList + "\n\n\nQuest line code reference: 'atom' is Attack of the Mundane, 'moon' is Lunar Battle, and 'moonstone' is Recidvate.\n\n\nINSTRUCTIONS: Copy-paste the url below into browser address bar, followed by the quest code above, then hit ‘enter’.\n\nIMPORTANT NOTE: The links will only work when there is ONE and ONLY ONE Google account signed in to the browser.\nRather than logging out of your Google accounts, it's easier to just open an unused browser, or an incognito (Chrome),\nprivate (Firefox), or inPrivate (Internet Explorer) window, log in to one Google account, and paste the link there.\n\nLink:\n" + getWebAppURL() + "?questId=";
 
     var content = ContentService.createTextOutput(menu);
     return content;
