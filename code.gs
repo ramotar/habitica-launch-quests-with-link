@@ -8,7 +8,6 @@
  * Function to handle GET requests to the Web App.
  * Serves the interface to the script user.
  */
-/*
 function doGet(event) {
   let webAppURL = ScriptApp.getService().getUrl();
   setWebAppURL(webAppURL);
@@ -19,12 +18,9 @@ function doGet(event) {
   let output = template.evaluate();
   output.setTitle(getScriptName());
 
-  return output;
-}
-*/
+  // return output;
 
-function doGet(e) {
-  user = api_getUser();
+  let user = api_getUser();
 
   var allQuests = user.items.quests;
   var userName = user.auth.local.username;
@@ -32,7 +28,7 @@ function doGet(e) {
 
 
   //If no path info specified show menu
-  if (Object.keys(e.parameters).length === 0) {
+  if (Object.keys(event.parameters).length === 0) {
     let numQuests = Object.keys(ownedScrolls).length;
     var urlList = "\n\n";
     var scrollCode = "";
@@ -49,7 +45,7 @@ function doGet(e) {
     return content;
   }
 
-  var chosenScroll = e.parameters.questId[0];
+  var chosenScroll = event.parameters.questId[0];
 
   //Check if scroll is in inventory. End script if not available.
   var chosenInventory = ownedScrolls[chosenScroll];
