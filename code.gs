@@ -22,9 +22,14 @@ function doGet(event) {
 
   let user = api_getUser();
 
-  var allQuests = user.items.quests;
-  var userName = user.auth.local.username;
-  var ownedScrolls = positiveInventoryOnly(allQuests);
+  let userQuests = user.items.quests;
+  // Filter quests the user has a scroll of
+  let ownedScrolls = {};
+  for (let questKey of Object.keys(userQuests)) {
+    if (userQuests[questKey] > 0) {
+      ownedScrolls[questKey] = userQuests[questKey];
+    }
+  }
 
 
   //If no path info specified show menu
@@ -67,23 +72,6 @@ function doGet(event) {
     }
     return content;
   }
-}
-
-
-// Delete from schema all quests with no scrolls
-function positiveInventoryOnly(allQuests) {
-  var noScrolls = "start"
-  while (typeof noScrolls !== 'undefined') {
-
-    function getKeyByValue(object, value) {
-      return Object.keys(object).find(key => object[key] === value);
-    }
-
-    var noScrolls = (getKeyByValue(allQuests, 0));
-    delete allQuests[noScrolls];
-  }
-  var ownedScrolls = allQuests
-  return ownedScrolls
 }
 
 function processWebhookInstant(type, data) {
