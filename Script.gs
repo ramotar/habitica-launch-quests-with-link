@@ -39,8 +39,8 @@ function doGet(e) {
     if (chosenInventory < 1) {
       var content = ContentService.createTextOutput("The quest " + chosenScroll.toString() + " is NOT in " + userName + "'s inventory.\n\nClick back button to try again.");
     } else {
-      api_cancelQuest();
-      api_launchQuest(chosenScroll);
+      api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+      api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + chosenScroll, POST_PARAMS);
       var content = ContentService.createTextOutput("Command to launch the quest " + chosenScroll.toString() + " has been sent.");
 
     }
@@ -63,30 +63,4 @@ function positiveInventoryOnly(allQuests) {
   }
   var ownedScrolls = allQuests
   return ownedScrolls
-}
-
-
-// Cancel unstarted user quest
-function api_cancelQuest() {
-  const params = {
-    "method": "post",
-    "headers": HEADERS,
-    "contentType": "application/json",
-    "muteHttpExceptions": true,
-  }
-  const urlA = "https://habitica.com/api/v3/groups/party/quests/cancel"
-  return UrlFetchApp.fetch(urlA, params);
-}
-
-
-// Launch quest
-function api_launchQuest(chosenScroll) {
-  const params = {
-    "method": "post",
-    "headers": HEADERS,
-    "contentType": "application/json",
-    "muteHttpExceptions": true,
-  }
-  const urlB = "https://habitica.com/api/v3/groups/party/quests/invite/" + chosenScroll;
-  return UrlFetchApp.fetch(urlB, params);
 }
