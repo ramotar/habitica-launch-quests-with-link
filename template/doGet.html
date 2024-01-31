@@ -46,6 +46,10 @@
         color: var(--blue100);
       }
 
+      h3 {
+        font-size: 16px;
+      }
+
       a {
         text-decoration: none;
         color: var(--blue100);
@@ -119,9 +123,32 @@
   </head>
   <body align="center">
     <h1><?= getScriptName() ?></h1>
+
+    <h2>Quest Inventory of <?= userName ?></h2>
+    <p>
+      Welcome to the Quest inventory of <?= userName ?>.<br />
+      Here you can find a list of available quests and the links to launch them.
+    </p>
+
+    <h3>Instructions</h3>
+    <p>
+      Each link is built in the same way: It's the URL of this WebApp followed by the quest code in the list.<br />
+      You can simply click a link in the list below or build it yourself with the following URL:<br />
+      <a href="<?= getWebAppURL() ?>?questId="><?= getWebAppURL() ?>?questId=</a>
+    </p>
+    <h3>Important Note</h3>
+    <p>
+      The links will only work, when there is ONE and ONLY ONE Google account signed in to the browser.<br />
+      Rather than logging out of your Google accounts, it's easier to just open an unused browser,<br />
+      or an incognito (Chrome), private (Firefox), or inPrivate (Internet Explorer) window, log in to one Google account, and paste the link there.
+    </p>
+
+    <hr />
+
+    <h2>Script Maintenance</h2>
     <p>
       Welcome to your script interface. This is the place to maintain your script.<br />
-      Here you can trigger a check of your credentials and get all necessary information.
+      Here you can trigger a check of your credentials.
     </p>
 
     <h2>Web App URL</h2>
@@ -143,7 +170,6 @@
       </p>
     <? } ?>
 
-    <h2>Actions</h2>
     <div id="actions" style="display: block;">
       <p>
         <input type="button" value="Check credentials" onclick="update()" />
