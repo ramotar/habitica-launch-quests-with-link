@@ -35,26 +35,18 @@ function doGet(event) {
   if (event.parameter.hasOwnProperty("questId")) {
     var questId = event.parameter.questId;
 
-    //Check if scroll is in inventory. End script if not available.
-    var chosenInventory = ownedScrolls[questId];
-
-    if (chosenInventory === undefined) {
-      chosenInventory = 0;
+    var content;
+    // Check inventory state
+    if (questId in ownedScrolls) {
+      // Launch quest
+      api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+      api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+      content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
     }
-    var content = launchQuest(chosenInventory);
+    else {
+      content = ContentService.createTextOutput("The quest " + questId.toString() + " is NOT in " + userName + "'s inventory.\n\nClick back button to try again.");
+    }
     return content;
-
-    function launchQuest(chosenInventory) {
-      if (chosenInventory < 1) {
-        var content = ContentService.createTextOutput("The quest " + questId.toString() + " is NOT in " + userName + "'s inventory.\n\nClick back button to try again.");
-      } else {
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
-        var content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
-
-      }
-      return content;
-    }
   }
   // Show the menu
   else {
