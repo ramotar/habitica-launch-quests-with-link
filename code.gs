@@ -20,17 +20,27 @@ function doGet(event) {
     if (event.parameter.hasOwnProperty("questId")) {
       var questId = event.parameter.questId;
 
-      var content;
+      var response;
       // Check inventory state
       if (questId in ownedScrolls) {
         tryLaunchingQuest(questId);
-        
-        content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
+
+        response = {
+          "responseCode": 200,
+          "success": true,
+          "error": "OK",
+          "message": "Quest \"" + questId + "\" has been successfully launched."
+        }
       }
       else {
-        content = ContentService.createTextOutput("The quest " + questId.toString() + " is NOT in " + userName + "'s inventory.\n\nClick back button to try again.");
+        response = {
+          "responseCode": 404,
+          "success": false,
+          "error": "",
+          "message": "Quest \"" + questId + "\" not found in the users inventory."
+        }
       }
-      return content;
+      return ContentService.createTextOutput(JSON.stringify(response));
     }
     // Show the menu
     else {
