@@ -134,8 +134,28 @@
     <p>
       Each link is built in the same way: It's the URL of this WebApp followed by the quest code in the list.<br />
       You can simply click a link in the list below or build it yourself with the following URL:<br />
-      <a href="<?= getWebAppURL() ?>?questId="><?= getWebAppURL() ?>?questId=</a>
+      <a href="<?= webAppURL ?>?questId="><?= getWebAppURL() ?>?questId=</a>
     </p>
+
+    <table align="center">
+      <thead style="font-weight: 700;">
+        <tr>
+          <td>Quest Code</td>
+          <td>Inventory</td>
+          <td align="left">Quest Name</td>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (let questKey in ownedScrolls) { ?>
+        <tr>
+          <td><a href="<?= webAppURL ?>?questId=<?= questKey ?>"><?= questKey ?></td>
+          <td><?= ownedScrolls[questKey] ?></td>
+          <td align="left"><?= HabiticaQuestKeys.getQuestName(questKey) ?></td>
+        </tr>
+        <? } ?>
+      </tbody>
+    </table>
+
     <h3>Important Note</h3>
     <p>
       The links will only work, when there is ONE and ONLY ONE Google account signed in to the browser.<br />
@@ -154,7 +174,7 @@
     <h2>Web App URL</h2>
     <p>
       Your Web App URL for future reference:<br />
-      <a href="<?= getWebAppURL() ?>"><?= getWebAppURL() ?></a>
+      <a href="<?= webAppURL ?>"><?= webAppURL ?></a>
     </p>
 
     <h2>Status</h2>

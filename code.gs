@@ -17,7 +17,7 @@ function doGet(event) {
   let userQuests = user.items.quests;
   // Filter quests the user has a scroll of
   let ownedScrolls = {};
-  for (let questKey of Object.keys(userQuests)) {
+  for (let questKey in userQuests) {
     if (userQuests[questKey] > 0) {
       ownedScrolls[questKey] = userQuests[questKey];
     }
@@ -58,8 +58,10 @@ function doGet(event) {
     // return content;
 
     let template = HtmlService.createTemplateFromFile('template/doGet');
+    template.webAppURL = webAppURL;
     template.installTime = getInstallTime();
     template.userName = user.profile.name;
+    template.ownedScrolls = ownedScrolls;
 
     let output = template.evaluate();
     output.setTitle(getScriptName());
