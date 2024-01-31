@@ -23,24 +23,8 @@ function doGet(event) {
       var content;
       // Check inventory state
       if (questId in ownedScrolls) {
-        // Try canceling an own pending quest invitation
-        try {
-          api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
-        }
-        catch (error) {
-          let response = error.cause;
-          let content = parseJSON(response.getContentText());
-
-          // If the error message is, that no quest is active right now
-          if (false && content.message == "Text, that is sent, when no quest is active") {
-            // Everything is fine, ignore the error
-          }
-          else {
-            // Re-throw the error
-            throw error;
-          }
-        }
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+        tryLaunchingQuest(questId);
+        
         content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
       }
       else {
@@ -96,6 +80,29 @@ function getOwnedScrolls(user) {
   }
 
   return ownedScrolls;
+}
+
+function tryLaunchingQuest(questId) {
+  // Try canceling an own pending quest invitation
+  try {
+    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+  }
+  catch (error) {
+    let response = error.cause;
+    let content = parseJSON(response.getContentText());
+
+    // If the error message is, that no quest is active right now
+    if (false && content.message == "Text, that is sent, when no quest is active") {
+      // Everything is fine, ignore the error
+    }
+    else {
+      // Re-throw the error
+      throw error;
+    }
+  }
+
+  // Try launching the quest
+  api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
 }
 
 function processWebhookInstant(type, data) {
