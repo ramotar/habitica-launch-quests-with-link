@@ -31,8 +31,23 @@ function doGet(event) {
       var content;
       // Check inventory state
       if (questId in ownedScrolls) {
-        // Launch quest
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+        // Try canceling an own pending quest invitation
+        try {
+          api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+        }
+        catch (error) {
+          let response = error.cause;
+          let content = parseJSON(response.getContentText());
+
+          // If the error message is, that no quest is active right now
+          if (false || content.message == "Text, that is sent, when no quest is active") {
+            // Everything is fine, ignore the error
+          }
+          else {
+            // Re-throw the error
+            throw error;
+          }
+        }
         api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
         content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
       }
@@ -57,6 +72,8 @@ function doGet(event) {
   }
   catch (error) {
     if (event.parameter.hasOwnProperty("questId")) {
+      notifyUserOfError(error);
+
       // Error was triggered by HTTP request and contains the response as cause
       if (error.hasOwnProperty("cause") && error.cause.getContentText) {
         let response = error.cause;
