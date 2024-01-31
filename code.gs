@@ -102,8 +102,11 @@ function tryLaunchingQuest(questId) {
     let content = parseJSON(response.getContentText());
 
     // If the error message is, that no quest is active right now
-    if (false && content.message == "Text, that is sent, when no quest is active") {
+    if (true || content.message == "Text, that is sent, when no quest is active") {
       // Everything is fine, ignore the error
+
+      // TEMP: Notify user to find out the correct message
+      notifyUserOfError(error);
     }
     else {
       // Re-throw the error

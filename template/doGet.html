@@ -137,7 +137,7 @@
       <a href="<?= webAppURL ?>?questId="><?= getWebAppURL() ?>?questId=</a>
     </p>
 
-    <table align="center">
+    <table id="questInventory" align="center">
       <thead style="font-weight: 700;">
         <tr>
           <td>Quest Code</td>
@@ -148,13 +148,21 @@
       <tbody>
         <? for (let questKey in ownedScrolls) { ?>
         <tr>
-          <td><a href="<?= webAppURL ?>?questId=<?= questKey ?>"><?= questKey ?></td>
+          <td><a onclick="showLoading()" href="<?= webAppURL ?>?questId=<?= questKey ?>"><?= questKey ?></td>
           <td><?= ownedScrolls[questKey] ?></td>
           <td align="left"><?= HabiticaQuestKeys.getQuestName(questKey) ?></td>
         </tr>
         <? } ?>
       </tbody>
     </table>
+
+    <div id="loading" align="center" style="display: none;">
+      <div class="loader"></div>
+      <p>
+        Loading ...<br />
+        Please wait for the request to finish.
+      </p>
+    </div>
 
     <h3>Important Note</h3>
     <p>
@@ -213,6 +221,10 @@
     </div>
 
     <script>
+      function showLoading() {
+        document.getElementById("questInventory").style.display = "none";
+        document.getElementById("loading").style.display = "block";
+      }
       function install() {
         showWaiting();
         google.script.run.withSuccessHandler(reloadPage).install();
