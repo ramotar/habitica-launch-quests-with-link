@@ -121,7 +121,7 @@
     <h1><?= getScriptName() ?></h1>
     <p>
       Welcome to your script interface. This is the place to maintain your script.<br />
-      Here you can trigger the installation, update after a change to your preferences or remove the script.
+      Here you can trigger a check of your credentials and get all necessary information.
     </p>
 
     <h2>Web App URL</h2>
@@ -133,22 +133,20 @@
     <h2>Status</h2>
     <? if (installTime) { ?>
       <p>
-        <font class="installed">INSTALLED</font><br />
-        You're script has been installed on <?= installTime.toLocaleString('en-GB') ?>
+        <font class="installed">CHECKED</font><br />
+        Your credentials have been checked on <?= installTime.toLocaleString('en-GB') ?>
       </p>
     <? } else { ?>
       <p>
-        <font class="notinstalled">NOT INSTALLED</font><br />
-        You're script has not been installed yet.
+        <font class="notinstalled">NOT YET CHECKED</font><br />
+        Your credentials haven't been checked yet.
       </p>
     <? } ?>
 
     <h2>Actions</h2>
     <div id="actions" style="display: block;">
       <p>
-        <input type="button" value="Install" onclick="install()" <? if (installTime) { ?>disabled <? } ?>/>
-        <input type="button" value="Update" onclick="update()" <? if (!installTime) { ?>disabled <? } ?>/>
-        <input type="button" value="Uninstall" onclick="uninstall()" <? if (!installTime) { ?>disabled <? } ?>/>
+        <input type="button" value="Check credentials" onclick="update()" />
       </p>
     </div>
     <div id="waiting" align="center" style="display: none;">

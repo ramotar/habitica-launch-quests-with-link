@@ -12,14 +12,6 @@ function doGet(event) {
   let webAppURL = ScriptApp.getService().getUrl();
   setWebAppURL(webAppURL);
 
-  let template = HtmlService.createTemplateFromFile('template/doGet');
-  template.installTime = getInstallTime();
-
-  let output = template.evaluate();
-  output.setTitle(getScriptName());
-
-  // return output;
-
   let user = api_getUser();
 
   let userQuests = user.items.quests;
@@ -63,7 +55,15 @@ function doGet(event) {
     var menu = userName.toString() + "'s quest inventory and codes:" + urlList + "\n\n\nQuest line code reference: 'atom' is Attack of the Mundane, 'moon' is Lunar Battle, and 'moonstone' is Recidvate.\n\n\nINSTRUCTIONS: Copy-paste the url below into browser address bar, followed by the quest code above, then hit ‘enter’.\n\nIMPORTANT NOTE: The links will only work when there is ONE and ONLY ONE Google account signed in to the browser.\nRather than logging out of your Google accounts, it's easier to just open an unused browser, or an incognito (Chrome),\nprivate (Firefox), or inPrivate (Internet Explorer) window, log in to one Google account, and paste the link there.\n\nLink:\n" + getWebAppURL() + "?questId=";
 
     var content = ContentService.createTextOutput(menu);
-    return content;
+    // return content;
+
+    let template = HtmlService.createTemplateFromFile('template/doGet');
+    template.installTime = getInstallTime();
+
+    let output = template.evaluate();
+    output.setTitle(getScriptName());
+
+    return output;
   }
 }
 
