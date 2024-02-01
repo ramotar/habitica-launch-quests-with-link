@@ -225,17 +225,9 @@
         document.getElementById("questInventory").style.display = "none";
         document.getElementById("loading").style.display = "block";
       }
-      function install() {
-        showWaiting();
-        google.script.run.withSuccessHandler(reloadPage).install();
-      }
       function update() {
         showWaiting();
         google.script.run.withSuccessHandler(reloadPage).update();
-      }
-      function uninstall() {
-        showWaiting();
-        google.script.run.withSuccessHandler(reloadPage).uninstall();
       }
       function showWaiting() {
         document.getElementById("actions").style.display = "none";
