@@ -101,12 +101,9 @@ function tryLaunchingQuest(questId) {
     let response = error.cause;
     let content = parseJSON(response.getContentText());
 
-    // If the error message is, that no quest is active right now
-    if (true || content.message == "Text, that is sent, when no quest is active") {
+    // If the error message is, that no invitation has been sent, that can be canceled
+    if (response.getResponseCode() == 404 && content.message == "No quest invitation has been sent out yet.") {
       // Everything is fine, ignore the error
-
-      // TEMP: Notify user to find out the correct message
-      notifyUserOfError(error);
     }
     else {
       // Re-throw the error
@@ -116,6 +113,11 @@ function tryLaunchingQuest(questId) {
 
   // Try launching the quest
   api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+
+  if (PM_ON_QUEST_START) {
+    let questName = HabiticaQuestKeys.getQuestName(questId);
+    api_sendPM("Your quest _" + (questName ? questName : questId) + "_ has been launched!");
+  }
 }
 
 function processWebhookInstant(type, data) {
