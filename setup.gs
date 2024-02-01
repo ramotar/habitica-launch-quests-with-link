@@ -52,11 +52,6 @@ function install() {
 
     // if all options entered by the user are valid
     if (validateOptions()) {
-      // create triggers
-      // createTriggers();
-      // create webhooks
-      // createWebhooks();
-
       // save the time the installation was completed
       updateInstallTime();
 
@@ -75,11 +70,6 @@ function uninstall() {
   // - Remove all other permanent changes the script has introduced during initial
   //   setup and normal use
 
-  // delete triggers
-  // deleteTriggers();
-  // delete webhooks
-  // deleteWebhooks();
-
   // remove the install time
   deleteInstallTime();
 
@@ -91,70 +81,6 @@ function update() {
   // - It simply uninstalls and installs again.
   uninstall();
   install();
-}
-
-function createTriggers() {
-  // [Authors] This function is used to create your necessary triggers
-  // - Below you find an example trigger, that recurs every hour
-  // - Feel free to modify this trigger or add additional triggers
-
-  logInfo("Creating triggers");
-
-  ScriptApp.newTrigger("processTrigger")
-    .timeBased()
-    .everyHours(1)
-    .create();
-}
-
-function createWebhooks() {
-  // [Authors] This function is used to create webhooks to your script
-  // - Below you find an example webhook, that gets called, when a task is scored
-  // - Feel free to modify this webhook or add additional webhooks
-
-  logInfo("Creating webhooks");
-
-  let webhookData = {
-    "type": "taskActivity",
-    "options": {
-      "scored": true
-    }
-  }
-  api_createWebhook(webhookData);
-}
-
-function deleteTriggers() {
-  // [Authors] This function deletes all existing triggers for your script
-
-  let triggers = ScriptApp.getProjectTriggers();
-  if (triggers.length > 0) {
-
-    logInfo("Deleting triggers");
-
-    for (let trigger of triggers) {
-      ScriptApp.deleteTrigger(trigger);
-    }
-  }
-}
-
-function deleteWebhooks() {
-  // [Authors] This function deletes all existing webhooks to your script
-
-  let response = api_fetch("https://habitica.com/api/v3/user/webhook", GET_PARAMS);
-  let obj = parseJSON(response);
-  let webhooks = obj.data;
-
-  if (webhooks.length > 0) {
-
-    console.log("Deleting webhooks");
-
-    let webAppURL = getWebAppURL();
-
-    for (let webhook of webhooks) {
-      if (webhook.url == webAppURL) {
-        api_fetch("https://habitica.com/api/v3/user/webhook/" + webhook.id, DELETE_PARAMS);
-      }
-    }
-  }
 }
 
 function validateOptions() {
