@@ -113,4 +113,9 @@ function tryLaunchingQuest(questId) {
 
   // Try launching the quest
   api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+
+  if (PM_ON_QUEST_START) {
+    let questName = HabiticaQuestKeys.getQuestName(questId);
+    api_sendPM("Your quest _" + (questName ? questName : questId) + "_ has been launched!");
+  }
 }

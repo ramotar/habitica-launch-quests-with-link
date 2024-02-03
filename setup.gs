@@ -10,6 +10,7 @@ const API_TOKEN = "PasteYourApiTokenHere";
 /* ========================================== */
 // [Authors] Place all mandatory user-modified variables here
 // - e.g. skill to use, number of times to use, task to use skill on, etc.
+const PM_ON_QUEST_START = true;
 
 /* ========================================== */
 /* [Users] Optional customizations to fill in */
@@ -102,6 +103,11 @@ function validateOptions() {
   // test credentials
   if (valid) {
     valid = testCredentials();
+  }
+
+  if (typeof PM_ON_QUEST_START !== "boolean") {
+    logError("PM_ON_QUEST_START must a boolean value.\n\ne.g. const PM_ON_QUEST_START = true;");
+    valid = false;
   }
 
   if (!valid) {
