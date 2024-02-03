@@ -14,15 +14,7 @@ function doGet(event) {
 
   try {
     let user = api_getUser();
-
-    let userQuests = user.items.quests;
-    // Filter quests the user has a scroll of
-    let ownedScrolls = {};
-    for (let questKey in userQuests) {
-      if (userQuests[questKey] > 0) {
-        ownedScrolls[questKey] = userQuests[questKey];
-      }
-    }
+    let ownedScrolls = getOwnedScrolls(user);
 
     // If a questId parameter was given
     if (event.parameter.hasOwnProperty("questId")) {
@@ -74,6 +66,20 @@ function doGet(event) {
       throw error;
     }
   }
+}
+
+function getOwnedScrolls(user) {
+  let userQuests = user.items.quests;
+
+  // Filter quests the user has a scroll of
+  let ownedScrolls = {};
+  for (let questKey in userQuests) {
+    if (userQuests[questKey] > 0) {
+      ownedScrolls[questKey] = userQuests[questKey];
+    }
+  }
+
+  return ownedScrolls;
 }
 
 function tryLaunchingQuest(questId) {
