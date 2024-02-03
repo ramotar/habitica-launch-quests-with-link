@@ -46,6 +46,10 @@
         color: var(--blue100);
       }
 
+      h3 {
+        font-size: 16px;
+      }
+
       a {
         text-decoration: none;
         color: var(--blue100);
@@ -119,36 +123,84 @@
   </head>
   <body align="center">
     <h1><?= getScriptName() ?></h1>
+
+    <h2>Quest Inventory of <?= userName ?></h2>
+    <p>
+      Welcome to the Quest inventory of <?= userName ?>.<br />
+      Here you can find a list of available quests and the links to launch them.
+    </p>
+
+    <h3>Instructions</h3>
+    <p>
+      Each link is built in the same way: It's the URL of this WebApp followed by <code>?questId=</code> and the quest code in the list.<br />
+      You can simply click a link in the list below or build it yourself with the following URL:<br />
+      <a href="<?= webAppURL ?>?questId="><?= getWebAppURL() ?>?questId=</a>
+    </p>
+
+    <table id="questInventory" align="center">
+      <thead style="font-weight: 700;">
+        <tr>
+          <td>Quest Code</td>
+          <td>Inventory</td>
+          <td align="left">Quest Name</td>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (let questKey in ownedScrolls) { ?>
+        <tr>
+          <td><a onclick="showLoading()" href="<?= webAppURL ?>?questId=<?= questKey ?>"><?= questKey ?></td>
+          <td><?= ownedScrolls[questKey] ?></td>
+          <td align="left"><?= HabiticaQuestKeys.getQuestName(questKey) ?></td>
+        </tr>
+        <? } ?>
+      </tbody>
+    </table>
+
+    <div id="loading" align="center" style="display: none;">
+      <div class="loader"></div>
+      <p>
+        Loading ...<br />
+        Please wait for the request to finish.
+      </p>
+    </div>
+
+    <h3>Important Note</h3>
+    <p>
+      The links will only work, when there is ONE and ONLY ONE Google account signed in to the browser.<br />
+      Rather than logging out of your Google accounts, it's easier to just open an unused browser,<br />
+      or an incognito (Chrome), private (Firefox), or inPrivate (Internet Explorer) window, log in to one Google account, and paste the link there.
+    </p>
+
+    <hr />
+
+    <h2>Script Maintenance</h2>
     <p>
       Welcome to your script interface. This is the place to maintain your script.<br />
-      Here you can trigger the installation, update after a change to your preferences or remove the script.
+      Here you can trigger a check of your credentials.
     </p>
 
     <h2>Web App URL</h2>
     <p>
       Your Web App URL for future reference:<br />
-      <a href="<?= getWebAppURL() ?>"><?= getWebAppURL() ?></a>
+      <a href="<?= webAppURL ?>"><?= webAppURL ?></a>
     </p>
 
     <h2>Status</h2>
     <? if (installTime) { ?>
       <p>
-        <font class="installed">INSTALLED</font><br />
-        You're script has been installed on <?= installTime.toLocaleString('en-GB') ?>
+        <font class="installed">CHECKED</font><br />
+        Your credentials have been checked on <?= installTime.toLocaleString('en-GB') ?>
       </p>
     <? } else { ?>
       <p>
-        <font class="notinstalled">NOT INSTALLED</font><br />
-        You're script has not been installed yet.
+        <font class="notinstalled">NOT YET CHECKED</font><br />
+        Your credentials haven't been checked yet.
       </p>
     <? } ?>
 
-    <h2>Actions</h2>
     <div id="actions" style="display: block;">
       <p>
-        <input type="button" value="Install" onclick="install()" <? if (installTime) { ?>disabled <? } ?>/>
-        <input type="button" value="Update" onclick="update()" <? if (!installTime) { ?>disabled <? } ?>/>
-        <input type="button" value="Uninstall" onclick="uninstall()" <? if (!installTime) { ?>disabled <? } ?>/>
+        <input type="button" value="Check credentials" onclick="update()" />
       </p>
     </div>
     <div id="waiting" align="center" style="display: none;">
@@ -169,17 +221,13 @@
     </div>
 
     <script>
-      function install() {
-        showWaiting();
-        google.script.run.withSuccessHandler(reloadPage).install();
+      function showLoading() {
+        document.getElementById("questInventory").style.display = "none";
+        document.getElementById("loading").style.display = "block";
       }
       function update() {
         showWaiting();
         google.script.run.withSuccessHandler(reloadPage).update();
-      }
-      function uninstall() {
-        showWaiting();
-        google.script.run.withSuccessHandler(reloadPage).uninstall();
       }
       function showWaiting() {
         document.getElementById("actions").style.display = "none";
