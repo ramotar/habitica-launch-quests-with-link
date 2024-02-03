@@ -64,8 +64,8 @@ function doGet(event) {
       if (error.hasOwnProperty("cause") && error.cause.getContentText) {
         let response = error.cause;
         let content = parseJSON(response.getContentText());
-        content = Object.assign({"responseCode": response.getResponseCode()}, content);
-        
+        content = Object.assign({ "responseCode": response.getResponseCode() }, content);
+
         return ContentService.createTextOutput(JSON.stringify(content));
       }
       else {
@@ -80,7 +80,7 @@ function doGet(event) {
 
 function getOwnedScrolls(user) {
   let userQuests = user.items.quests;
-  
+
   // Filter quests the user has a scroll of
   let ownedScrolls = {};
   for (let questKey in userQuests) {
