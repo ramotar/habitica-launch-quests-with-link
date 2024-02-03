@@ -31,9 +31,8 @@ function doGet(event) {
       var content;
       // Check inventory state
       if (questId in ownedScrolls) {
-        // Launch quest
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+        tryLaunchingQuest(questId);
+
         content = ContentService.createTextOutput("Command to launch the quest " + questId.toString() + " has been sent.");
       }
       else {
@@ -75,4 +74,27 @@ function doGet(event) {
       throw error;
     }
   }
+}
+
+function tryLaunchingQuest(questId) {
+  // Try canceling an own pending quest invitation
+  try {
+    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+  }
+  catch (error) {
+    let response = error.cause;
+    let content = parseJSON(response.getContentText());
+
+    // If the error message is, that no invitation has been sent, that can be canceled
+    if (response.getResponseCode() == 404 && content.message == "No quest invitation has been sent out yet.") {
+      // Everything is fine, ignore the error
+    }
+    else {
+      // Re-throw the error
+      throw error;
+    }
+  }
+
+  // Try launching the quest
+  api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
 }
