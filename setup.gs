@@ -1,5 +1,5 @@
 /**
- * Launch Quests with Link v1.0.1 by @Turac
+ * Launch Quests with Link v1.0.2 by @Turac
  *
  * Based on Launch Quests with Link (Release 3) by @Snefferdy:
  * https://habitica.fandom.com/wiki/Launch_Quests_With_Link
