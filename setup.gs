@@ -1,8 +1,10 @@
 /**
- * Example script v1.2.3 by John Doe
+ * Launch Quests with Link v1.0.1 by @Turac
  *
- * See Wiki / GitHub page for info & setup instructions:
- * https://link/to/wiki-or-github/page
+ * Based on Launch Quests with Link (Release 3) by @Snefferdy:
+ * https://habitica.fandom.com/wiki/Launch_Quests_With_Link
+ *
+ * Ported to the Habitica GAS Template
  */
 
 /* ========================================== */
