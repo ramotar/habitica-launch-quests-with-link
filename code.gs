@@ -61,12 +61,8 @@ function doGet(event) {
       notifyUserOfError(error);
 
       // Error was triggered by HTTP request and contains the response as cause
-      if (error.hasOwnProperty("cause") && error.cause.getContentText) {
-        let response = error.cause;
-        let content = parseJSON(response.getContentText());
-        content = Object.assign({ "responseCode": response.getResponseCode() }, content);
-
-        return ContentService.createTextOutput(JSON.stringify(content));
+      if (error.hasOwnProperty("cause")) {
+        return ContentService.createTextOutput(JSON.stringify(error.cause));
       }
       else {
         return ContentService.createTextOutput(error.message);
@@ -116,6 +112,6 @@ function tryLaunchingQuest(questId) {
 
   if (PM_ON_QUEST_START) {
     let questName = HabiticaQuestKeys.getQuestName(questId);
-    api_sendPM("Your quest _" + (questName ? questName : questId) + "_ has been launched!");
+    api_sendPM("Your quest **" + (questName ? questName : questId) + "** has been launched!");
   }
 }
