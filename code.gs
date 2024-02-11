@@ -116,6 +116,6 @@ function tryLaunchingQuest(questId) {
 
   if (PM_ON_QUEST_START) {
     let questName = HabiticaQuestKeys.getQuestName(questId);
-    api_sendPM("Your quest _" + (questName ? questName : questId) + "_ has been launched!");
+    api_sendPM("Your quest **" + (questName ? questName : questId) + "** has been launched!");
   }
 }
