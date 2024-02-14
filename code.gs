@@ -73,8 +73,6 @@ function getOwnedScrolls(user) {
 }
 
 function tryLaunchingQuest(questId) {
-  let cancelAndRetry = false;
-
   // Try launching the quest
   try {
     api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
@@ -82,23 +80,38 @@ function tryLaunchingQuest(questId) {
   catch (error) {
     let response = error.cause;
 
-    // If the error message is, that there is already a quest invitation by me
+    // If the error message is, that there is already a running quest
     if (response.responseCode == 401 && response.message == "Your party is already on a quest. Try again when the current quest has ended.") {
-      // Go on and try canceling it
-      cancelAndRetry = true;
+      // Check the state of the quest
+      let party = api_getParty();
+      let quest = party.quest;
+      if (quest.active) {
+        // Party is already on running quest, re-write error message and re-throw
+        response.message = "You can not cancel an active quest, use the abort functionality.";
+        error.cause = response;
+        throw error;
+      }
+      else if (quest.leader != INT_USER_ID) {
+        // There is already an invitation by another user, re-write error message and re-throw
+        response.message = "Your party is already invited to a quest by another user. Try again when the current quest has ended.";
+        error.cause = response;
+        throw error
+      }
+      else if (quest.key != questId) {
+        // Cancel the own pending quest invitation
+        api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+
+        // Re-try launching the quest
+        api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+      }
+      // If none of the above clauses were true,
+      // then the party had an active quest invitation by you to the required quest,
+      // so there is nothing to do besides being happy
     }
     else {
       // Re-throw the error
       throw error;
     }
-  }
-
-  if (cancelAndRetry) {
-    // Try canceling an own pending quest invitation
-    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
-
-    // Try launching the quest
-    api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
   }
 
   if (PM_ON_QUEST_START) {
