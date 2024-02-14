@@ -9,55 +9,23 @@
  * Serves the interface to the script user.
  */
 function doGet(event) {
-  let webAppURL = ScriptApp.getService().getUrl();
-  setWebAppURL(webAppURL);
-
-  try {
-    let user = api_getUser();
-    let ownedScrolls = getOwnedScrolls(user);
-
-    // If a questId parameter was given
-    if (event.parameter.hasOwnProperty("questId")) {
+  // If a questId parameter was given
+  if (event.parameter.hasOwnProperty("questId")) {
+    try {
       var questId = event.parameter.questId;
 
-      var response;
-      // Check inventory state
-      if (questId in ownedScrolls) {
-        tryLaunchingQuest(questId);
+      tryLaunchingQuest(questId);
 
-        response = {
-          "responseCode": 200,
-          "success": true,
-          "error": "OK",
-          "message": "Quest \"" + questId + "\" has been successfully launched."
-        }
+      let response = {
+        "responseCode": 200,
+        "success": true,
+        "error": "OK",
+        "message": "Quest \"" + questId + "\" has been successfully launched."
       }
-      else {
-        response = {
-          "responseCode": 404,
-          "success": false,
-          "error": "",
-          "message": "Quest \"" + questId + "\" not found in the users inventory."
-        }
-      }
+      
       return ContentService.createTextOutput(JSON.stringify(response));
     }
-    // Show the menu
-    else {
-      let template = HtmlService.createTemplateFromFile('template/doGet');
-      template.webAppURL = webAppURL;
-      template.installTime = getInstallTime();
-      template.userName = user.profile.name;
-      template.ownedScrolls = ownedScrolls;
-
-      let output = template.evaluate();
-      output.setTitle(getScriptName());
-
-      return output;
-    }
-  }
-  catch (error) {
-    if (event.parameter.hasOwnProperty("questId")) {
+    catch (error) {
       notifyUserOfError(error);
 
       // Error was triggered by HTTP request and contains the response as cause
@@ -68,9 +36,25 @@ function doGet(event) {
         return ContentService.createTextOutput(error.message);
       }
     }
-    else {
-      throw error;
-    }
+  }
+  // Show the menu
+  else {
+    let webAppURL = ScriptApp.getService().getUrl();
+    setWebAppURL(webAppURL);
+
+    let user = api_getUser();
+    let ownedScrolls = getOwnedScrolls(user);
+
+    let template = HtmlService.createTemplateFromFile('template/doGet');
+    template.webAppURL = webAppURL;
+    template.installTime = getInstallTime();
+    template.userName = user.profile.name;
+    template.ownedScrolls = ownedScrolls;
+
+    let output = template.evaluate();
+    output.setTitle(getScriptName());
+
+    return output;
   }
 }
 
