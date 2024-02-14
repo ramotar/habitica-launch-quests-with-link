@@ -154,8 +154,7 @@ function api_fetch(url, params, instant = false, maxAttempts = 3) {
   let domain = url.split("/", 3).join("/");
   let cause = Object.assign(
     { "responseCode": response.getResponseCode() },
-    parseJSON(response.getContentText()),
-    { "headers": response.getAllHeaders() }
+    parseJSON(response.getContentText())
   );
 
   // if request failed finally, throw exception

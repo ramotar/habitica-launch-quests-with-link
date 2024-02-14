@@ -89,17 +89,19 @@ function getOwnedScrolls(user) {
 }
 
 function tryLaunchingQuest(questId) {
-  // Try canceling an own pending quest invitation
+  let cancelAndRetry = false;
+
+  // Try launching the quest
   try {
-    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+    api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
   }
   catch (error) {
     let response = error.cause;
-    let content = parseJSON(response.getContentText());
 
-    // If the error message is, that no invitation has been sent, that can be canceled
-    if (response.getResponseCode() == 404 && content.message == "No quest invitation has been sent out yet.") {
-      // Everything is fine, ignore the error
+    // If the error message is, that there is already a quest invitation by me
+    if (response.responseCode == 401 && response.message == "Your party is already on a quest. Try again when the current quest has ended.") {
+      // Go on and try canceling it
+      cancelAndRetry = true;
     }
     else {
       // Re-throw the error
@@ -107,8 +109,13 @@ function tryLaunchingQuest(questId) {
     }
   }
 
-  // Try launching the quest
-  api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+  if (cancelAndRetry) {
+    // Try canceling an own pending quest invitation
+    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+
+    // Try launching the quest
+    api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+  }
 
   if (PM_ON_QUEST_START) {
     let questName = HabiticaQuestKeys.getQuestName(questId);
