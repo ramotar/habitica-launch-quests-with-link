@@ -22,7 +22,7 @@ function doGet(event) {
         "error": "OK",
         "message": "Quest \"" + questId + "\" has been successfully launched."
       }
-      
+
       return ContentService.createTextOutput(JSON.stringify(response));
     }
     catch (error) {
@@ -75,7 +75,7 @@ function getOwnedScrolls(user) {
 function tryLaunchingQuest(questId) {
   // Try launching the quest
   try {
-    api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+    api_inviteToQuest(questId);
   }
   catch (error) {
     let response = error.cause;
@@ -99,10 +99,10 @@ function tryLaunchingQuest(questId) {
       }
       else if (quest.key != questId) {
         // Cancel the own pending quest invitation
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+        api_cancelQuest();
 
         // Re-try launching the quest
-        api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
+        api_inviteToQuest(questId);
       }
       // If none of the above clauses were true,
       // then the party had an active quest invitation by you to the required quest,
