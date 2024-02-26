@@ -9,55 +9,23 @@
  * Serves the interface to the script user.
  */
 function doGet(event) {
-  let webAppURL = ScriptApp.getService().getUrl();
-  setWebAppURL(webAppURL);
-
-  try {
-    let user = api_getUser();
-    let ownedScrolls = getOwnedScrolls(user);
-
-    // If a questId parameter was given
-    if (event.parameter.hasOwnProperty("questId")) {
+  // If a questId parameter was given
+  if (event.parameter.hasOwnProperty("questId")) {
+    try {
       var questId = event.parameter.questId;
 
-      var response;
-      // Check inventory state
-      if (questId in ownedScrolls) {
-        tryLaunchingQuest(questId);
+      tryLaunchingQuest(questId);
 
-        response = {
-          "responseCode": 200,
-          "success": true,
-          "error": "OK",
-          "message": "Quest \"" + questId + "\" has been successfully launched."
-        }
+      let response = {
+        "responseCode": 200,
+        "success": true,
+        "error": "OK",
+        "message": "Quest \"" + questId + "\" has been successfully launched."
       }
-      else {
-        response = {
-          "responseCode": 404,
-          "success": false,
-          "error": "",
-          "message": "Quest \"" + questId + "\" not found in the users inventory."
-        }
-      }
+
       return ContentService.createTextOutput(JSON.stringify(response));
     }
-    // Show the menu
-    else {
-      let template = HtmlService.createTemplateFromFile('template/doGet');
-      template.webAppURL = webAppURL;
-      template.installTime = getInstallTime();
-      template.userName = user.profile.name;
-      template.ownedScrolls = ownedScrolls;
-
-      let output = template.evaluate();
-      output.setTitle(getScriptName());
-
-      return output;
-    }
-  }
-  catch (error) {
-    if (event.parameter.hasOwnProperty("questId")) {
+    catch (error) {
       notifyUserOfError(error);
 
       // Error was triggered by HTTP request and contains the response as cause
@@ -68,9 +36,25 @@ function doGet(event) {
         return ContentService.createTextOutput(error.message);
       }
     }
-    else {
-      throw error;
-    }
+  }
+  // Show the menu
+  else {
+    let webAppURL = ScriptApp.getService().getUrl();
+    setWebAppURL(webAppURL);
+
+    let user = api_getUser();
+    let ownedScrolls = getOwnedScrolls(user);
+
+    let template = HtmlService.createTemplateFromFile('template/doGet');
+    template.webAppURL = webAppURL;
+    template.installTime = getInstallTime();
+    template.userName = user.profile.name;
+    template.ownedScrolls = ownedScrolls;
+
+    let output = template.evaluate();
+    output.setTitle(getScriptName());
+
+    return output;
   }
 }
 
@@ -89,26 +73,46 @@ function getOwnedScrolls(user) {
 }
 
 function tryLaunchingQuest(questId) {
-  // Try canceling an own pending quest invitation
+  // Try launching the quest
   try {
-    api_fetch("https://habitica.com/api/v3/groups/party/quests/cancel", POST_PARAMS);
+    api_inviteToQuest(questId);
   }
   catch (error) {
     let response = error.cause;
-    let content = parseJSON(response.getContentText());
 
-    // If the error message is, that no invitation has been sent, that can be canceled
-    if (response.getResponseCode() == 404 && content.message == "No quest invitation has been sent out yet.") {
-      // Everything is fine, ignore the error
+    // If the error message is, that there is already a running quest
+    if (response.responseCode == 401 && response.message == "Your party is already on a quest. Try again when the current quest has ended.") {
+      // Check the state of the quest
+      let party = api_getParty();
+      let quest = party.quest;
+      if (quest.active) {
+        // Party is already on running quest, re-write error message and re-throw
+        response.message = "You can not cancel an active quest, use the abort functionality.";
+        error.cause = response;
+        throw error;
+      }
+      else if (quest.leader != INT_USER_ID) {
+        // There is already an invitation by another user, re-write error message and re-throw
+        response.message = "Your party is already invited to a quest by another user. Try again when the current quest has ended.";
+        error.cause = response;
+        throw error
+      }
+      else if (quest.key != questId) {
+        // Cancel the own pending quest invitation
+        api_cancelQuest();
+
+        // Re-try launching the quest
+        api_inviteToQuest(questId);
+      }
+      // If none of the above clauses were true,
+      // then the party had an active quest invitation by you to the required quest,
+      // so there is nothing to do besides being happy
     }
     else {
       // Re-throw the error
       throw error;
     }
   }
-
-  // Try launching the quest
-  api_fetch("https://habitica.com/api/v3/groups/party/quests/invite/" + questId, POST_PARAMS);
 
   if (PM_ON_QUEST_START) {
     let questName = HabiticaQuestKeys.getQuestName(questId);
